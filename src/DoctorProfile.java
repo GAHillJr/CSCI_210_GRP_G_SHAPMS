@@ -6,9 +6,25 @@
  * Maintain maps of doctor schedules and patient loads.
  */
 public class DoctorProfile {
+    /**
+     * Doctor's full name.
+     */
     private String name;
+
+    /**
+     * Unique badge identifier assigned to the doctor.
+     */
     private int badgeId;
+
+    /**
+     * Medical specialty (for example: `Cardiology`, `Pediatrics`).
+     */
     private String specialty;
+
+    /**
+     * Working schedule in a human-readable or encoded format
+     * (for example: `Mon-Fri 09:00-17:00` or `M,W,F:09-17`).
+     */
     private String schedule;
 
     /**

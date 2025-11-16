@@ -6,10 +6,30 @@
  * Track and limit the number of active appointments per patient.
  */
 public class PatientProfile {
+    /**
+     * Patient's full name.
+     */
     private String name;
+
+    /**
+     * Unique patient identifier.
+     */
     private int patientId;
+
+    /**
+     * Patient's age in years.
+     */
     private int age;
+
+    /**
+     * Contact information (phone, email, address).
+     */
     private String contactInfo;
+
+    /**
+     * Brief medical history summary; consider storing detailed records
+     * in a dedicated medical record class or database.
+     */
     private String medicalHistory;
 
     /**
