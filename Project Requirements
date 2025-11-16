@@ -1,0 +1,100 @@
+Project Requirements
+    Smart Healthcare Appointment & Patient Management System (SHAPMS)
+
+Project Overview
+    The goal is to build a data-structure–driven system that efficiently manages appointments, patients, doctors, and
+    schedules, while using algorithms to optimize scheduling, prioritize critical patients, and track hospital activity.
+    The system allows users (hospital staff and patients) to book, reschedule, and cancel appointments, manage patient
+    data, and generate statistical and performance reports.
+
+Learning Objectives
+    Implement and manipulate linked lists, stacks, queues, and deques.
+    Apply recursion for generating reports and managing scheduling conflicts.
+    Construct and traverse binary search trees, heaps, and optionally Huffman trees.
+    Use hash tables, sets, and maps for quick lookups of doctors, patients, and appointments.
+    Implement and compare various sorting algorithms.
+    Explore self-balancing trees for fast searching and updates.
+    Collaborate to design, implement, and test a multi-component Java system.
+
+Functional Requirements
+// Appointment Management
+    Add, edit, or cancel appointments (patient ID, doctor ID, date/time, reason).
+    Display appointments chronologically, by doctor, or by department.
+    Detect and handle scheduling conflicts using recursion.
+    Manage appointment queues for walk-ins or emergency patients.
+
+// Patient Management
+    Register new patients (name, ID, age, contact info, medical history).
+    Maintain records of past visits using linked lists.
+    Track and limit the number of active appointments per patient.
+
+// Doctor Management
+    Add and manage doctor profiles (ID, name, specialty, schedule).
+    Assign doctors to appointments based on specialty and availability.
+    Maintain maps of doctor schedules and patient loads.
+
+// Scheduling & Priority Handling
+    Use priority queues for urgent or emergency cases.
+    Automatically update waitlists and notify patients of cancellations.
+    Detect scheduling conflicts recursively and reschedule intelligently.
+
+// Search & Sorting
+    Search for patients or doctors by name, ID, or specialty using binary search trees.
+    Sort appointments by date, urgency, or doctor.
+    Use heaps for “most consulted” or “busiest doctor” recommendations.
+
+// Data Storage
+    Use hash tables for constant-time access to patient and doctor records.
+    Use sets to manage specialties, departments, and unique patient tags.
+    Use maps to link patients with their appointments.
+
+// Advanced Features
+    Self-balancing trees (AVL/Red-Black Trees) for optimized searches.
+    Priority queues for triaging emergency cases.
+    Optional Huffman coding for compressing patient notes or reports.
+    Recursive reports (e.g., daily summary, doctor workload, patient activity).
+
+// User Interface
+    Console-based system with menu-driven navigation.
+    Display hospital data: patients, doctors, appointments, and queues.
+    Allow both admin and patient roles for different actions.
+
+Technical Requirements
+Project Technical Requirement   Lesson Applied	Feature Implementation Example
+Singly-linked lists	            Lesson 3	    Manage patients’ appointment history
+Doubly-linked lists	            Lesson 4	    Manage rescheduling history or visit records
+Stacks	                        Lesson 5	    Track undo/redo of scheduling changes
+Queues & Deques	                Lesson 6	    Manage appointment and emergency queues
+Recursion	                    Lesson 7	    Handle scheduling conflicts and report generation
+Binary Search Trees	            Lesson 8	    Store and search doctors/patients efficiently
+Heaps	                        Lesson 9	    Identify busiest doctors or most frequent patients
+Hash Tables	                    Lesson 10	    Store patient/doctor information for fast retrieval
+Sets & Maps	                    Lesson 11	    Manage departments, specialties, and mappings
+Sorting	                        Lesson 12	    Sort appointments or patients by time, name, or urgency
+Self-Balancing Trees	        Lesson 13	    Ensure efficient search and updates under heavy load
+
+Team Roles & Responsibilities
+Student	    Responsibility	                                            Lessons
+Student 1	Core data structures (Linked Lists, Patient/Doctor classes)	3–4
+Student 2	Stack, Queue, Recursion, Sorting algorithms	                5–7, 12
+Student 3	Trees, Heaps, Huffman coding, Balancing algorithms	        8–9, 13
+Student 4	Hash Tables, Sets/Maps, Console UI, System Integration	    10–11
+
+Milestones
+#	Milestone	                Description
+1	Design & Setup	            Define architecture, assign roles, and build base classes (Patient, Doctor, Appointment)
+2	Scheduling Logic	        Implement appointment queues, stacks, recursion, and sorting
+3	Search & Data Optimization  Add BSTs, heaps, and hash maps for efficient lookups
+4	Integration & Testing	    Implement self-balancing trees, finalize UI, testing, and documentation
+
+Deliverables
+    Functional Java application implementing SHAPMS.
+    Team report detailing design choices, algorithms used, and testing results.
+    Final presentation/demo demonstrating system operations.
+
+Project Evaluation Criteria
+Criteria	                                            Weight
+Correct implementation of data structures & algorithms	40%
+Code organization, readability, and documentation	    20%
+Functionality and completeness of the system	        20%
+Team collaboration and project management	            20%
