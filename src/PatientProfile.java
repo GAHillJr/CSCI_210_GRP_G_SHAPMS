@@ -1,9 +1,9 @@
 /**
  * Represents a patient's profile in a healthcare system.
  * This class includes functionalities to:
- *      Create new patients profile Objects (name, ID, age, contact info, medical history).
- *      Maintain records of past visits using linked lists.
- *      Track and limit the number of active appointments per patient.
+ * Create new patients profile Objects (name, ID, age, contact info, medical history).
+ * Maintain records of past visits using linked lists.
+ * Track and limit the number of active appointments per patient.
  */
 public class PatientProfile {
     private String name;
@@ -12,7 +12,15 @@ public class PatientProfile {
     private String contactInfo;
     private String medicalHistory;
 
-    // Constructor
+    /**
+     * Constructor to initialize a PatientProfile object.
+     *
+     * @param name           The name of the patient.
+     * @param patientId      The unique ID of the patient.
+     * @param age            The age of the patient.
+     * @param contactInfo    The contact information of the patient.
+     * @param medicalHistory The medical history of the patient.
+     */
     public PatientProfile(String name, int patientId, int age, String contactInfo, String medicalHistory) {
         this.name = name;
         this.patientId = patientId;
@@ -22,42 +30,93 @@ public class PatientProfile {
     }
 
     // Getters and Setters
+
+    /**
+     * Gets the name of the patient.
+     *
+     * @return The name of the patient.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name of the patient.
+     *
+     * @param name The name to set for the patient.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the patient ID.
+     *
+     * @return The patient ID.
+     */
     public int getPatientId() {
         return patientId;
     }
 
+    /**
+     * Sets the patient ID.
+     *
+     * @param patientId The patient ID to set.
+     */
     public void setPatientId(int patientId) {
         this.patientId = patientId;
     }
 
+    /**
+     * Gets the age of the patient.
+     *
+     * @return The age of the patient.
+     */
     public int getAge() {
         return age;
     }
 
+    /**
+     * Sets the age of the patient.
+     *
+     * @param age The age to set for the patient.
+     */
     public void setAge(int age) {
         this.age = age;
     }
 
+    /**
+     * Gets the contact information of the patient.
+     *
+     * @return The contact information of the patient.
+     */
     public String getContactInfo() {
         return contactInfo;
     }
 
+    /**
+     * Sets the contact information of the patient.
+     *
+     * @param contactInfo The contact information to set for the patient.
+     */
     public void setContactInfo(String contactInfo) {
         this.contactInfo = contactInfo;
     }
 
+    /**
+     * Gets the medical history of the patient.
+     *
+     * @return The medical history of the patient.
+     */
     public String getMedicalHistory() {
         return medicalHistory;
     }
 
+    /**
+     * Sets the medical history of the patient.
+     *
+     * @param medicalHistory The medical history to set for the patient.
+     */
     public void setMedicalHistory(String medicalHistory) {
         this.medicalHistory = medicalHistory;
     }
