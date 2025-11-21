@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 /**
  * Represents a patient's profile in a healthcare system.
  * This class includes functionalities to:
@@ -139,5 +141,44 @@ public class PatientProfile {
      */
     public void setMedicalHistory(String medicalHistory) {
         this.medicalHistory = medicalHistory;
+    }
+
+    /**
+     * Compares this PatientProfile object with another for equality.
+     *
+     * @param otherPatientProfile The other PatientProfile object to compare with.
+     * @return True if both objects have the same patient details; otherwise, false.
+     */
+    @Override
+    public boolean equals(Object otherPatientProfile) {
+        if (otherPatientProfile == null || getClass() != otherPatientProfile.getClass()) return false;
+        PatientProfile that = (PatientProfile) otherPatientProfile;
+        return getPatientId() == that.getPatientId() && getAge() == that.getAge() && Objects.equals(getName(), that.getName()) && Objects.equals(getContactInfo(), that.getContactInfo()) && Objects.equals(getMedicalHistory(), that.getMedicalHistory());
+    }
+
+    /**
+     * Generates a hash code for the PatientProfile object.
+     *
+     * @return The hash code based on patient details.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getPatientId(), getAge(), getContactInfo(), getMedicalHistory());
+    }
+
+    /**
+     * Returns a string representation of the PatientProfile object.
+     *
+     * @return A string containing patient details.
+     */
+    @Override
+    public String toString() {
+        return "Patient Information" +
+                "\n---------------------------" +
+                "\nName: " + name +
+                "\nPatient ID: " + patientId +
+                "\nAge: " + age +
+                "\nContact Info: " + contactInfo +
+                "\nMedicalHistory: " + medicalHistory;
     }
 }
