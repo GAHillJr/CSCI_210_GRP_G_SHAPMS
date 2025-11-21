@@ -27,16 +27,27 @@ public class WeeklySchedule {
     /**
      * Sets availability for a specific day and hour.
      *
-     * @param day  The day of the week.
+     * @param day  The day of the week. 1= Monday, 7 = Sunday.
      * @param hour The hour of the day (0-23).
      * @param task The task description.
      */
     public void setAvailability(DayOfWeek day, int hour, String task) {
-        if (hour >= 0 && hour < 24) {
+        if (hour >= 8 && hour < 17) { // Assuming working hours are 8 AM to 5 PM
             this.schedule.get(day)[hour] = task;
         } else {
-            System.out.println("Invalid hour. Must be between 0 and 23.");
+            System.out.println("Invalid hour. Must be between 8 and 17.");
         }
+    }
+
+    /**
+     * Sets an appointment for a specific day and hour.
+     *
+     * @param day                The day of the week.
+     * @param hour               The hour of the day (0-23).
+     * @param appointmentDetails The details of the appointment.
+     */
+    public void setAppointment(DayOfWeek day, int hour, String appointmentDetails) {
+        setAvailability(day, hour, appointmentDetails);
     }
 
     /**
