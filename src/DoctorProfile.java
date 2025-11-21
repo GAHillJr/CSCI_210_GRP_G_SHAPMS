@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 /**
  * Represents a doctor's profile with basic information.
  * This class includes functionalities to:
@@ -14,18 +16,18 @@ public class DoctorProfile {
     /**
      * Unique badge identifier assigned to the doctor.
      */
-    private int badgeId;
+    private final int badgeId;
 
     /**
      * Medical specialty (for example: `Cardiology`, `Pediatrics`).
      */
-    private String specialty;
+    private final String specialty;
 
     /**
      * Working schedule in a human-readable or encoded format
      * (for example: `Mon-Fri 09:00-17:00` or `M,W,F:09-17`).
      */
-    private String schedule;
+    private WeeklySchedule schedule;
 
     /**
      * Constructor to initialize a DoctorProfile object.
@@ -35,38 +37,30 @@ public class DoctorProfile {
      * @param specialty The medical specialty of the doctor.
      * @param schedule  The working schedule of the doctor.
      */
-    public DoctorProfile(String name, int badgeId, String specialty, String schedule) {
+    public DoctorProfile(String name, int badgeId, String specialty, WeeklySchedule schedule) {
         this.name = name;
         this.badgeId = badgeId;
         this.specialty = specialty;
         this.schedule = schedule;
     }
-    // Getters and Setters
 
-    /**
-     * Gets the name of the doctor.
-     *
-     * @return The name of the doctor.
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets the name of the doctor.
-     *
-     * @param name The name to set for the doctor.
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets the badge ID of the doctor.
-     *
-     * @return The badge ID of the doctor.
-     */
-    public int getBadgeId() {
-        return badgeId;
+    @Override
+    public boolean equals(Object otherDoctorProfile) {
+        if (otherDoctorProfile == null || getClass() != otherDoctorProfile.getClass()) return false;
+        DoctorProfile that = (DoctorProfile) otherDoctorProfile;
+        return badgeId == that.badgeId && Objects.equals(getName(), that.getName()) && Objects.equals(specialty, that.specialty) && Objects.equals(schedule, that.schedule);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), badgeId, specialty, schedule);
     }
 }
