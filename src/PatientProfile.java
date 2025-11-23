@@ -2,7 +2,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
@@ -46,8 +45,7 @@ public class PatientProfile {
      * @param contactInfo    The contact information of the patient.
      * @param medicalHistory The medical history stack (most recent first).
      */
-    public PatientProfile(String firstName, String lastName, LocalDate dateOfBirth, String contactInfo,
-                          Stack<PatientAppointment> medicalHistory) {
+    public PatientProfile(String firstName, String lastName, LocalDate dateOfBirth, String contactInfo, Stack<PatientAppointment> medicalHistory) {
         this(firstName, lastName, dateOfBirth, contactInfo, medicalHistory, DEFAULT_MAX_ACTIVE);
     }
 
@@ -149,7 +147,7 @@ public class PatientProfile {
      * Return an unmodifiable snapshot of medical history (most recent first).
      */
     public List<PatientAppointment> getMedicalHistory() {
-        return Collections.unmodifiableList(new ArrayList<>(medicalHistory));
+        return List.copyOf(medicalHistory);
     }
 
     /**
@@ -182,7 +180,7 @@ public class PatientProfile {
      * Returns an unmodifiable view of current active appointments.
      */
     public List<PatientAppointment> getActiveAppointments() {
-        return Collections.unmodifiableList(new ArrayList<>(activeAppointments));
+        return List.copyOf(activeAppointments);
     }
 
     /**
