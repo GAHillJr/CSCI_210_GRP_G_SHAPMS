@@ -1,4 +1,5 @@
 import java.util.Objects;
+import java.util.Stack;
 
 /**
  * Represents a patient's profile in a healthcare system.
@@ -13,7 +14,7 @@ public class PatientProfile {
     private int patientId;
     private int age;
     private String contactInfo;
-    private String medicalHistory;
+    private final Stack<PatientAppointment> medicalHistory;
 
     /**
      * Constructor to initialize a PatientProfile object.
@@ -24,7 +25,7 @@ public class PatientProfile {
      * @param contactInfo    The contact information of the patient.
      * @param medicalHistory The medical history of the patient.
      */
-    public PatientProfile(String name, int patientId, int age, String contactInfo, String medicalHistory) {
+    public PatientProfile(String name, int patientId, int age, String contactInfo, Stack<PatientAppointment> medicalHistory) {
         this.name = name;
         this.patientId = patientId;
         this.age = age;
@@ -111,17 +112,17 @@ public class PatientProfile {
      *
      * @return The medical history of the patient.
      */
-    public String getMedicalHistory() {
+    public Stack<PatientAppointment> getMedicalHistory() {
         return medicalHistory;
     }
 
     /**
      * Sets the medical history of the patient.
      *
-     * @param medicalHistory The medical history to set for the patient.
+     * @param newAppointment The medical history to set for the patient.
      */
-    public void setMedicalHistory(String medicalHistory) {
-        this.medicalHistory = medicalHistory;
+    public void addToMedicalHistory(PatientAppointment newAppointment) {
+        this.medicalHistory.push(newAppointment);
     }
 
     /**

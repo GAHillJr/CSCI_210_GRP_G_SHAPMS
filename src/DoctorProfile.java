@@ -165,6 +165,7 @@ public class DoctorProfile implements Comparable<DoctorProfile> {
      */
     @Override
     public int compareTo(DoctorProfile other) {
+        System.out.println("Comparing badge IDs: " + this.badgeId + " and " + other.badgeId);
         return Integer.compare(this.badgeId, other.badgeId);
     }
 }
