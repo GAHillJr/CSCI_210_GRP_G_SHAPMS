@@ -3,117 +3,162 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
- * This class represents a patient appointment in a hospital management system.
- * It includes functionalities to:
- * Create appointment (patient ID, doctor ID, date/time, reason).
- * Maintain appointment details and provide accessors.
+ * Represents a scheduled appointment between a patient and a doctor.
+ * Instances are immutable: once created the core fields cannot be changed.
+ * Comparable is implemented to allow sorting by appointment date/time (earlier first).
  */
-public class PatientAppointment {
-    public PatientProfile PatientProfile;
-    public DoctorProfile DoctorProfile;
-    public LocalDateTime dateTime;
-    public String reason;
+public record PatientAppointment(PatientProfile patientProfile, DoctorProfile doctorProfile, LocalDateTime dateTime,
+                                 String reason) implements Comparable<PatientAppointment> {
+
+    private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     /**
-     * Constructor to initialize a PatientAppointment object.
+     * Create a new appointment.
      *
-     * @param patientProfile The profile of the patient.
-     * @param doctorProfile  The profile of the doctor.
-     * @param dateTime       The date and time of the appointment.
-     * @param reason         The reason for the appointment.
+     * @param patientProfile the patient; must not be null
+     * @param doctorProfile  the doctor; must not be null
+     * @param dateTime       appointment date/time; must not be null
+     * @param reason         reason for visit; must not be null or empty
+     * @throws NullPointerException     if any required parameter is null
+     * @throws IllegalArgumentException if reason is empty
      */
-    public PatientAppointment(PatientProfile patientProfile, DoctorProfile doctorProfile, LocalDateTime dateTime, String reason) {
-        this.PatientProfile = patientProfile;
-        this.DoctorProfile = doctorProfile;
-        this.dateTime = dateTime;
-        this.reason = reason;
-    }
-    // Getters and Setters
-
-    /**
-     * Gets the patient profile.
-     *
-     * @return The patient profile.
-     */
-    public PatientProfile getPatientProfile() {
-        return PatientProfile;
+    public PatientAppointment(PatientProfile patientProfile,
+                              DoctorProfile doctorProfile,
+                              LocalDateTime dateTime,
+                              String reason) {
+        this.patientProfile = Objects.requireNonNull(patientProfile, "patientProfile must not be null");
+        this.doctorProfile = Objects.requireNonNull(doctorProfile, "doctorProfile must not be null");
+        this.dateTime = Objects.requireNonNull(dateTime, "dateTime must not be null");
+        this.reason = requireNonEmpty(reason);
     }
 
     /**
-     * Sets the patient profile.
+     * Validates that a string is non-null and non-empty after trimming.
      *
-     * @param patientProfile The patient profile to set.
+     * @param value The string to validate.
+     * @return The trimmed string if valid.
+     * @throws NullPointerException     if the string is null.
+     * @throws IllegalArgumentException if the string is empty after trimming.
      */
-    public void setPatientProfile(PatientProfile patientProfile) {
-        PatientProfile = patientProfile;
+    private static String requireNonEmpty(String value) {
+        if (value == null) throw new NullPointerException("reason" + " must not be null");
+        String trimmed = value.trim();
+        if (trimmed.isEmpty()) throw new IllegalArgumentException("reason" + " must not be empty");
+        return trimmed;
     }
 
     /**
-     * Gets the doctor profile.
-     *
-     * @return The doctor profile.
+     * @return the patient profile for this appointment
      */
-    public DoctorProfile getDoctorProfile() {
-        return DoctorProfile;
+    @Override
+    public PatientProfile patientProfile() {
+        return patientProfile;
     }
 
     /**
-     * Sets the doctor profile.
-     *
-     * @param doctorProfile The doctor profile to set.
+     * @return the doctor profile for this appointment
      */
-    public void setDoctorProfile(DoctorProfile doctorProfile) {
-        DoctorProfile = doctorProfile;
+    @Override
+    public DoctorProfile doctorProfile() {
+        return doctorProfile;
     }
 
-
-    public LocalDateTime getDateTime() {
+    /**
+     * @return appointment date/time
+     */
+    @Override
+    public LocalDateTime dateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
     /**
-     * Gets the reason for the appointment.
-     *
-     * @return The reason for the appointment.
+     * @return reason for the appointment
      */
-    public String getReason() {
+    @Override
+    public String reason() {
         return reason;
     }
 
     /**
-     * Sets the reason for the appointment.
+     * Convenience accessor for the patient id (delegates to PatientProfile).
      *
-     * @param reason The reason to set for the appointment.
+     * @return patient id
      */
-    public void setReason(String reason) {
-        this.reason = reason;
+    public int getPatientId() {
+        return patientProfile.getPatientId();
+    }
+
+    /**
+     * Convenience accessor for the doctor badge id (delegates to DoctorProfile).
+     *
+     * @return doctor badge id
+     */
+    public int getDoctorBadgeId() {
+        return doctorProfile.getBadgeId();
+    }
+
+    // Safely get patient name, handling potential nulls
+    private String safePatientName() {
+        try {
+            return patientProfile.getLastName() + ", " + patientProfile.getFirstName();
+        } catch (Exception e) {
+            return "Unknown Patient";
+        }
+    }
+
+    // Safely get doctor name, handling potential nulls
+    private String safeDoctorName() {
+        try {
+            return doctorProfile.getLastName() + ", " + doctorProfile.getFirstName();
+        } catch (Exception e) {
+            return "Unknown Doctor";
+        }
     }
 
     @Override
-    // Equals and HashCode based on all fields
     public boolean equals(Object otherPatientAppointment) {
+        if (this == otherPatientAppointment) return true;
         if (otherPatientAppointment == null || getClass() != otherPatientAppointment.getClass()) return false;
+
         PatientAppointment that = (PatientAppointment) otherPatientAppointment;
-        return Objects.equals(getPatientProfile(), that.getPatientProfile()) && Objects.equals(getDoctorProfile(), that.getDoctorProfile()) && Objects.equals(getDateTime(), that.getDateTime()) && Objects.equals(getReason(), that.getReason());
+
+        // Use stable identifiers and date/time for equality
+        return getPatientId() == that.getPatientId()
+                && getDoctorBadgeId() == that.getDoctorBadgeId()
+                && Objects.equals(dateTime, that.dateTime);
+    }
+
+    /**
+     * Compare by appointment date/time, then patient id, then doctor id.
+     *
+     * @param other other appointment to compare
+     * @return negative if this is earlier, positive if later, zero if equal
+     */
+    @Override
+    public int compareTo(PatientAppointment other) {
+        int cmp = this.dateTime.compareTo(other.dateTime);
+        if (cmp != 0) return cmp;
+        cmp = Integer.compare(this.getPatientId(), other.getPatientId());
+        if (cmp != 0) return cmp;
+        return Integer.compare(this.getDoctorBadgeId(), other.getDoctorBadgeId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPatientProfile(), getDoctorProfile(), getDateTime(), getReason());
+        return Objects.hash(getPatientId(), getDoctorBadgeId(), dateTime);
     }
 
     @Override
-    // String representation of the appointment
     public String toString() {
+        String patientName = safePatientName();
+        String doctorName = safeDoctorName();
+        String formatted = dateTime == null ? "N/A" : dateTime.format(DISPLAY_FORMATTER);
         return "Appointment Details:" +
                 "\n---------------------------" +
-                "\nPatient Name: " + PatientProfile.getLastName() +
-                "\nDoctor Name: " + DoctorProfile.getFirstName() +
-                "\nDate/Time: " + (dateTime == null ? "N/A" : dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))) +
-                "\nReason for Visit: " + reason;
+                "\nPatient: " + patientName +
+                "\nDoctor: " + doctorName +
+                "\nDate/Time: " + formatted +
+                "\nReason: " + reason;
     }
+
 }

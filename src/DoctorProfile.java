@@ -1,76 +1,107 @@
 import java.time.DayOfWeek;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Represents a doctor's profile in a healthcare system.
- * This class includes functionalities to:
- * - Create new doctor profile objects (firstName, badge ID, specialty, weekly schedule).
- * - Manage the doctor's weekly schedule using the WeeklySchedule class.
- * - Compare doctor profiles based on badge ID for sorting and searching.
+ * Improved DoctorProfile:
+ * - badgeId is generated with a static AtomicInteger (stable, unique, final).
+ * - equals/hashCode use badgeId (unique identity).
+ * - input validation for names and specialty.
+ * - exportSchedule returns a deep copy of the underlying schedule map/arrays.
+ * - implements Comparable by badgeId for simple sorting.
  */
-public class DoctorProfile {
+public class DoctorProfile implements Comparable<DoctorProfile> {
 
+    // Static AtomicInteger to generate unique badge IDs
+    private static final AtomicInteger NEXT_BADGE = new AtomicInteger(1);
+
+    // Instance fields
     private String firstName;
     private String lastName;
     private final int badgeId;
     private final String specialty;
     private final WeeklySchedule schedule;
 
+    // Constructor
+    /**
+     * Constructs a DoctorProfile with the given details.
+     *
+     * @param firstName The first name of the doctor.
+     * @param lastName  The last name of the doctor.
+     * @param specialty The medical specialty of the doctor.
+     * @param schedule  The weekly schedule of the doctor.
+     */
     public DoctorProfile(String firstName, String lastName, String specialty, WeeklySchedule schedule) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.badgeId = getBadgeId();
+        this.firstName = requireNonEmpty(firstName, "firstName");
+        this.lastName = requireNonEmpty(lastName, "lastName");
         this.specialty = Objects.requireNonNull(specialty, "specialty must not be null");
         this.schedule = Objects.requireNonNull(schedule, "schedule must not be null");
+        this.badgeId = NEXT_BADGE.getAndIncrement();
+    }
+
+    /**
+     * Validates that a string is non-null and non-empty after trimming.
+     *
+     * @param value The string to validate.
+     * @param name  The name of the parameter (for error messages).
+     * @return The trimmed string if valid.
+     * @throws NullPointerException     if the string is null.
+     * @throws IllegalArgumentException if the string is empty after trimming.
+     */
+    private static String requireNonEmpty(String value, String name) {
+        if (value == null) throw new NullPointerException(name + " must not be null");
+        String trimmed = value.trim();
+        if (trimmed.isEmpty()) throw new IllegalArgumentException(name + " must not be empty");
+        return trimmed;
     }
 
     // Getters and Setters
-
     /**
-     * Gets the firstName of the doctor.
-     *
-     * @return The firstName of the doctor.
+     * @return The first name of the doctor.
      */
     public String getFirstName() {
         return firstName;
     }
 
     /**
-     * Sets the firstName of the doctor.
-     *
-     * @param firstName The new firstName of the doctor.
+     * @param firstName The first name to set.
      */
     public void setFirstName(String firstName) {
-        this.firstName = Objects.requireNonNull(firstName, "firstName must not be null");
+        this.firstName = requireNonEmpty(firstName, "firstName");
     }
 
     /**
-     * Gets the lastName of the doctor.
-     *
-     * @return The lastName of the doctor.
+     * @return The last name of the doctor.
      */
     public String getLastName() {
         return lastName;
     }
 
     /**
-     * Sets the lastName of the doctor.
-     *
-     * @param lastName The new lastName of the doctor.
+     * @param lastName The last name to set.
      */
     public void setLastName(String lastName) {
-        this.lastName = Objects.requireNonNull(lastName, "lastName must not be null");
-    }
-
-    /* Getters for badgeId and specialty */
-    public int getBadgeId() {
-        return hashCode();
+        this.lastName = requireNonEmpty(lastName, "lastName");
     }
 
     /**
-     * Gets the specialty of the doctor.
-     *
+     * @return The full name of the doctor.
+     */
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    /**
+     * @return The badge ID of the doctor.
+     */
+    public int getBadgeId() {
+        return badgeId;
+    }
+
+    /**
      * @return The specialty of the doctor.
      */
     public String getSpecialty() {
@@ -78,98 +109,59 @@ public class DoctorProfile {
     }
 
     /**
-     * Return a deep-copied export of the underlying schedule to avoid exposing internal arrays.
+     * Return a deep copy of the schedule export to avoid exposing internal arrays.
      */
     public Map<DayOfWeek, String[]> exportSchedule() {
-        return schedule.exportSchedule();
+        Map<DayOfWeek, String[]> original = schedule.exportSchedule();
+        Map<DayOfWeek, String[]> copy = new HashMap<>(original.size());
+        for (Map.Entry<DayOfWeek, String[]> e : original.entrySet()) {
+            String[] arr = e.getValue();
+            copy.put(e.getKey(), arr == null ? null : Arrays.copyOf(arr, arr.length));
+        }
+        return copy;
     }
 
-    /* Convenience delegations to WeeklySchedule */
-
-    /**
-     * Books an appointment for the specified day and hour with given details.
-     *
-     * @param day     The day of the week.
-     * @param hour    The hour of the day.
-     * @param details The details of the appointment.
-     * @return true if the appointment was successfully booked, false otherwise.
-     */
+    // Delegations to WeeklySchedule
     public boolean bookAppointment(DayOfWeek day, int hour, String details) {
         return schedule.bookAppointment(day, hour, details);
     }
 
-    /**
-     * Cancels an appointment for the specified day and hour.
-     *
-     * @param day  The day of the week.
-     * @param hour The hour of the day.
-     * @return true if the appointment was successfully canceled, false otherwise.
-     */
     public boolean cancelAppointment(DayOfWeek day, int hour) {
         return schedule.cancelAppointment(day, hour);
     }
 
-    /**
-     * Checks if a given slot is available.
-     *
-     * @param day  The day of the week.
-     * @param hour The hour of the day.
-     * @return true if the slot is available, false otherwise.
-     */
     public boolean isAvailable(DayOfWeek day, int hour) {
         return schedule.isAvailable(day, hour);
     }
 
-    /**
-     * Retrieves the details of the slot for a given day and hour.
-     *
-     * @param day  The day of the week.
-     * @param hour The hour of the day.
-     * @return The details of the slot, or null if available.
-     */
     public String getSlot(DayOfWeek day, int hour) {
         return schedule.getSlot(day, hour);
     }
 
-    /* Overridden methods */
-
-    /**
-     * Compares this DoctorProfile object with another for equality.
-     *
-     * @param otherDoctorProfile The other object to compare with.
-     * @return true if both objects have the same doctor details; otherwise, false.
-     */
     @Override
     public boolean equals(Object otherDoctorProfile) {
+        if (this == otherDoctorProfile) return true;
         if (otherDoctorProfile == null || getClass() != otherDoctorProfile.getClass()) return false;
         DoctorProfile that = (DoctorProfile) otherDoctorProfile;
-        return Objects.equals(firstName, that.firstName) &&
-                Objects.equals(lastName, that.lastName) &&
-                Objects.equals(specialty, that.specialty);
+        return badgeId == that.badgeId;
     }
 
-    /**
-     * Generates a hash code for the DoctorProfile object.
-     *
-     * @return The hash code of the object.
-     */
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, specialty);
+        return Integer.hashCode(badgeId);
     }
 
-    /**
-     * Provides a string representation of the DoctorProfile object.
-     *
-     * @return A string containing the doctor's details.
-     */
+    @Override
+    public int compareTo(DoctorProfile other) {
+        return Integer.compare(this.badgeId, other.badgeId);
+    }
+
     @Override
     public String toString() {
-        return "Doctor Information" +
-                "\n---------------------------" +
-                "\nName: " + firstName +
-                "\nBadge ID: " + badgeId +
-                "\nSpecialty: " + specialty +
-                "\nWeekly Schedule: " + schedule.toString();
+        return "Doctor Information\n---------------------------\n" +
+                "Name: " + getFullName() + "\n" +
+                "Badge ID: " + badgeId + "\n" +
+                "Specialty: " + specialty + "\n" +
+                "Weekly Schedule: " + exportSchedule();
     }
 }

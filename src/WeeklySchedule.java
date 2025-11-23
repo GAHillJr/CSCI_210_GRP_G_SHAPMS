@@ -3,31 +3,38 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Simple weekly schedule that stores only working-hour slots per day.
- * Each day has fixed hourly slots (e.g., 8:00-9:00, 9:00-10:00, etc.).
- * Each slot can either be available (null) or booked with appointment details (String).
+ * Simple weekly schedule that stores hourly slots per day.
+ * <p>
+ * Each day has a fixed number of hourly slots determined by {@code startHour} (inclusive)
+ * and {@code endHour} (exclusive). A slot value of {@code null} means the slot is available;
+ * a non\-null {@code String} contains appointment details.
+ * <p>
+ * This class performs defensive copying on exports and synchronizes public mutating/accessor
+ * methods to be safe for simple concurrent use.
  */
 public class WeeklySchedule {
 
     private final EnumMap<DayOfWeek, String[]> schedule;
-    private final int startHour; // inclusive - booked from
-    private final int endHour;   // exclusive - not booked
+    private final int startHour; // inclusive
+    private final int endHour;   // exclusive
     private final int slotsPerDay;
 
     /**
      * Constructs a WeeklySchedule with default working hours (8:00 - 17:00).
      */
     public WeeklySchedule() {
-        this(8, 17); // default 8:00 - 17:00
+        this(8, 17);
     }
 
     /**
      * Constructs a WeeklySchedule with specified working hours.
      *
-     * @param startHour The starting hour of the working day (inclusive).
-     * @param endHour   The ending hour of the working day (exclusive).
+     * @param startHour The starting hour of the working day (inclusive, 0-23).
+     * @param endHour   The ending hour of the working day (exclusive, 1-24).
+     * @throws IllegalArgumentException if hours are out of range or start >= end.
      */
     public WeeklySchedule(int startHour, int endHour) {
         if (startHour < 0 || endHour > 24 || startHour >= endHour) {
@@ -37,59 +44,82 @@ public class WeeklySchedule {
         this.endHour = endHour;
         this.slotsPerDay = endHour - startHour;
         this.schedule = new EnumMap<>(DayOfWeek.class);
+        // initialize arrays for every day to avoid NPEs later
         for (DayOfWeek d : DayOfWeek.values()) {
             this.schedule.put(d, new String[slotsPerDay]);
         }
     }
 
     /**
-     * Validates that the given hour is within working hours.
-     *
-     * @param hour The hour to validate.
+     * @return the inclusive start hour of the work day.
      */
+    public int getStartHour() {
+        return startHour;
+    }
+
+    /**
+     * @return the exclusive end hour of the work day.
+     */
+    public int getEndHour() {
+        return endHour;
+    }
+
+    /**
+     * @return number of slots per day (endHour - startHour).
+     */
+    public int getSlotsPerDay() {
+        return slotsPerDay;
+    }
+
+    // Validate hour within working hours.
     private void validateHour(int hour) {
         if (hour < startHour || hour >= endHour) {
             throw new IllegalArgumentException("Hour must be between " + startHour + " and " + (endHour - 1));
         }
     }
 
-    /**
-     * Converts an hour to the corresponding index in the slots array.
-     *
-     * @param hour The hour of the day.
-     * @return The index in the slots array.
-     */
+    // Compute index in the per-day array for a given hour. This is for internal use only.
     private int idx(int hour) {
         return hour - startHour;
     }
 
     /**
-     * Books an appointment for a given day and hour.
+     * Book an appointment detail into the specified slot if available.
      *
-     * @param day     The day of the week.
-     * @param hour    The hour of the day.
-     * @param details The details of the appointment.
-     * @return True if the appointment was successfully booked, false if the slot was already taken.
+     * @param day     non\-null day of week
+     * @param hour    hour within working hours
+     * @param details non\-null, non\-empty appointment details (trimmed)
+     * @return true if booked successfully, false if slot already taken
+     * @throws NullPointerException     if day or details is null
+     * @throws IllegalArgumentException if details is empty or hour out of range
      */
-    public boolean bookAppointment(DayOfWeek day, int hour, String details) {
+    public synchronized boolean bookAppointment(DayOfWeek day, int hour, String details) {
+        Objects.requireNonNull(day, "day must not be null");
+        Objects.requireNonNull(details, "details must not be null");
+        String trimmed = details.trim();
+        if (trimmed.isEmpty()) throw new IllegalArgumentException("details must not be empty");
         validateHour(hour);
         String[] slots = schedule.get(day);
         int i = idx(hour);
         if (slots[i] == null) {
-            slots[i] = details;
+            // store trimmed details
+            slots[i] = trimmed;
             return true;
         }
         return false;
     }
 
     /**
-     * Cancels an appointment for a given day and hour.
+     * Cancel an appointment at the given slot.
      *
-     * @param day  The day of the week.
-     * @param hour The hour of the day.
-     * @return True if the appointment was successfully canceled, false if there was no appointment.
+     * @param day  non\-null day of week
+     * @param hour hour within working hours
+     * @return true if an appointment was removed, false if slot was already empty
+     * @throws NullPointerException     if day is null
+     * @throws IllegalArgumentException if hour out of range
      */
-    public boolean cancelAppointment(DayOfWeek day, int hour) {
+    public synchronized boolean cancelAppointment(DayOfWeek day, int hour) {
+        Objects.requireNonNull(day, "day must not be null");
         validateHour(hour);
         String[] slots = schedule.get(day);
         int i = idx(hour);
@@ -101,35 +131,50 @@ public class WeeklySchedule {
     }
 
     /**
-     * Checks if a given slot is available.
+     * Checks availability of a slot.
      *
-     * @param day  The day of the week.
-     * @param hour The hour of the day.
-     * @return True if the slot is available, false if booked.
+     * @param day  non\-null day of week
+     * @param hour hour within working hours
+     * @return true if slot is available (null), false otherwise
+     * @throws NullPointerException     if day is null
+     * @throws IllegalArgumentException if hour out of range
      */
-    public boolean isAvailable(DayOfWeek day, int hour) {
+    public synchronized boolean isAvailable(DayOfWeek day, int hour) {
+        Objects.requireNonNull(day, "day must not be null");
         validateHour(hour);
         return schedule.get(day)[idx(hour)] == null;
     }
 
     /**
-     * Retrieves the details of the slot for a given day and hour.
+     * Legacy getter that may return {@code null} if the slot is available.
      *
-     * @param day  The day of the week.
-     * @param hour The hour of the day.
-     * @return The details of the slot, or null if available.
+     * @param day  non\-null day of week
+     * @param hour hour within working hours
+     * @return details string or {@code null} if available
      */
-    public String getSlot(DayOfWeek day, int hour) {
+    public synchronized String getSlot(DayOfWeek day, int hour) {
+        Objects.requireNonNull(day, "day must not be null");
         validateHour(hour);
         return schedule.get(day)[idx(hour)];
     }
 
     /**
-     * Exports a copy of the current schedule.
+     * Getter that returns an {@link Optional} to avoid nulls.
      *
-     * @return A map representing the schedule with days as keys and arrays of slot details as values.
+     * @param day  non\-null day of week
+     * @param hour hour within working hours
+     * @return Optional containing the details if present
      */
-    public Map<DayOfWeek, String[]> exportSchedule() {
+    public synchronized Optional<String> getSlotOptional(DayOfWeek day, int hour) {
+        return Optional.ofNullable(getSlot(day, hour));
+    }
+
+    /**
+     * Exports a defensive deep copy of the schedule.
+     *
+     * @return a map with copies of the per-day slot arrays.
+     */
+    public synchronized Map<DayOfWeek, String[]> exportSchedule() {
         EnumMap<DayOfWeek, String[]> copy = new EnumMap<>(DayOfWeek.class);
         for (DayOfWeek d : DayOfWeek.values()) {
             copy.put(d, Arrays.copyOf(schedule.get(d), slotsPerDay));
@@ -138,36 +183,39 @@ public class WeeklySchedule {
     }
 
     /**
-     * Compares this WeeklySchedule object with another for equality.
-     *
-     * @param otherWeeklySchedule The other WeeklySchedule object to compare with.
-     * @return True if both schedules are identical; otherwise, false.
+     * Deep equals; compares hours and per-day slot contents.
      */
     @Override
     public boolean equals(Object otherWeeklySchedule) {
+        if (this == otherWeeklySchedule) return true;
         if (otherWeeklySchedule == null || getClass() != otherWeeklySchedule.getClass()) return false;
         WeeklySchedule that = (WeeklySchedule) otherWeeklySchedule;
-        return startHour == that.startHour && endHour == that.endHour && slotsPerDay == that.slotsPerDay && Objects.equals(schedule, that.schedule);
+        if (startHour != that.startHour || endHour != that.endHour || slotsPerDay != that.slotsPerDay) return false;
+        for (DayOfWeek d : DayOfWeek.values()) {
+            if (!Arrays.equals(this.schedule.get(d), that.schedule.get(d))) return false;
+        }
+        return true;
     }
 
     /**
-     * Generates a hash code for the WeeklySchedule object.
-     *
-     * @return The hash code representing the WeeklySchedule.
+     * Hash code based on working hours and per-day slot contents.
      */
     @Override
     public int hashCode() {
-        return Objects.hash(schedule, startHour, endHour, slotsPerDay);
+        int h = Objects.hash(startHour, endHour, slotsPerDay);
+        for (DayOfWeek d : DayOfWeek.values()) {
+            h = 31 * h + Arrays.hashCode(schedule.get(d));
+        }
+        return h;
     }
 
     /**
-     * Provides a string representation of the weekly schedule.
-     *
-     * @return A formatted string showing the schedule for each day and time slot.
+     * Textual representation showing every day and slot status.
      */
     @Override
-    public String toString() {
+    public synchronized String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("WeeklySchedule (").append(startHour).append(":00-").append(endHour).append(":00)\n");
         for (DayOfWeek day : DayOfWeek.values()) {
             sb.append("\n--- ").append(day).append(" ---\n");
             String[] daySlots = schedule.get(day);
