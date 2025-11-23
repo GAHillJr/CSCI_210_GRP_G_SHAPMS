@@ -1,56 +1,60 @@
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Objects;
 import java.util.Stack;
 
 /**
  * Represents a patient's profile in a healthcare system.
  * This class includes functionalities to:
- * Create new patients profile Objects (name, ID, age, contact info, medical history).
+ * Create new patients profile Objects (lastName, ID, age, contact info, medical history).
  * Maintain records of past visits using linked lists.
  * Track and limit the number of active appointments per patient.
  */
 public class PatientProfile {
 
-    private String name;
-    private int patientId;
-    private int age;
+    private final String firstName;
+    private final String lastName;
+    private final int patientId;
+    private final int age;
     private String contactInfo;
     private final Stack<PatientAppointment> medicalHistory;
 
     /**
      * Constructor to initialize a PatientProfile object.
      *
-     * @param name           The name of the patient.
-     * @param patientId      The unique ID of the patient.
-     * @param age            The age of the patient.
+     * @param firstName      The firstName of the patient.
+     * @param lastName       The lastName of the patient.
+     * @param dateOfBirth    The date of birth of the patient.
      * @param contactInfo    The contact information of the patient.
      * @param medicalHistory The medical history of the patient.
      */
-    public PatientProfile(String name, int patientId, int age, String contactInfo, Stack<PatientAppointment> medicalHistory) {
-        this.name = name;
-        this.patientId = patientId;
-        this.age = age;
+    public PatientProfile(String firstName, String lastName, LocalDate dateOfBirth, String contactInfo,
+                          Stack<PatientAppointment> medicalHistory) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.patientId = setPatientId();
+        this.age = Period.between(dateOfBirth, LocalDate.now()).getYears();
         this.contactInfo = contactInfo;
         this.medicalHistory = medicalHistory;
     }
 
     // Getters and Setters
-
     /**
-     * Gets the name of the patient.
+     * Gets the firstName of the patient.
      *
-     * @return The name of the patient.
+     * @return The firstName of the patient.
      */
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
     /**
-     * Sets the name of the patient.
+     * Gets the lastName of the patient.
      *
-     * @param name The name to set for the patient.
+     * @return The lastName of the patient.
      */
-    public void setName(String name) {
-        this.name = name;
+    public String getLastName() {
+        return lastName;
     }
 
     /**
@@ -63,12 +67,10 @@ public class PatientProfile {
     }
 
     /**
-     * Sets the patient ID.
-     *
-     * @param patientId The patient ID to set.
+     * Sets the patient ID based on the object's hash code.
      */
-    public void setPatientId(int patientId) {
-        this.patientId = patientId;
+    private int setPatientId() {
+        return hashCode();
     }
 
     /**
@@ -78,15 +80,6 @@ public class PatientProfile {
      */
     public int getAge() {
         return age;
-    }
-
-    /**
-     * Sets the age of the patient.
-     *
-     * @param age The age to set for the patient.
-     */
-    public void setAge(int age) {
-        this.age = age;
     }
 
     /**
@@ -135,7 +128,7 @@ public class PatientProfile {
     public boolean equals(Object otherPatientProfile) {
         if (otherPatientProfile == null || getClass() != otherPatientProfile.getClass()) return false;
         PatientProfile that = (PatientProfile) otherPatientProfile;
-        return getPatientId() == that.getPatientId() && getAge() == that.getAge() && Objects.equals(getName(), that.getName()) && Objects.equals(getContactInfo(), that.getContactInfo()) && Objects.equals(getMedicalHistory(), that.getMedicalHistory());
+        return getPatientId() == that.getPatientId() && getAge() == that.getAge() && Objects.equals(getLastName(), that.getLastName()) && Objects.equals(getContactInfo(), that.getContactInfo()) && Objects.equals(getMedicalHistory(), that.getMedicalHistory());
     }
 
     /**
@@ -145,7 +138,7 @@ public class PatientProfile {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getPatientId(), getAge(), getContactInfo(), getMedicalHistory());
+        return Objects.hash(getLastName(), getAge());
     }
 
     /**
@@ -157,7 +150,7 @@ public class PatientProfile {
     public String toString() {
         return "Patient Information" +
                 "\n---------------------------" +
-                "\nName: " + name +
+                "\nName: " + lastName + ", " + firstName +
                 "\nPatient ID: " + patientId +
                 "\nAge: " + age +
                 "\nContact Info: " + contactInfo +

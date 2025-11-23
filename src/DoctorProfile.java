@@ -5,21 +5,22 @@ import java.util.Objects;
 /**
  * Represents a doctor's profile in a healthcare system.
  * This class includes functionalities to:
- * - Create new doctor profile objects (name, badge ID, specialty, weekly schedule).
+ * - Create new doctor profile objects (firstName, badge ID, specialty, weekly schedule).
  * - Manage the doctor's weekly schedule using the WeeklySchedule class.
  * - Compare doctor profiles based on badge ID for sorting and searching.
  */
-public class DoctorProfile implements Comparable<DoctorProfile> {
+public class DoctorProfile {
 
-    private String name;
+    private String firstName;
+    private String lastName;
     private final int badgeId;
     private final String specialty;
     private final WeeklySchedule schedule;
 
-    public DoctorProfile(String name, int badgeId, String specialty, WeeklySchedule schedule) {
-        this.name = Objects.requireNonNull(name, "name must not be null");
-        if (name.trim().isEmpty()) throw new IllegalArgumentException("name must not be empty");
-        this.badgeId = badgeId;
+    public DoctorProfile(String firstName, String lastName, String specialty, WeeklySchedule schedule) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.badgeId = getBadgeId();
         this.specialty = Objects.requireNonNull(specialty, "specialty must not be null");
         this.schedule = Objects.requireNonNull(schedule, "schedule must not be null");
     }
@@ -27,26 +28,44 @@ public class DoctorProfile implements Comparable<DoctorProfile> {
     // Getters and Setters
 
     /**
-     * Gets the name of the doctor.
+     * Gets the firstName of the doctor.
      *
-     * @return The name of the doctor.
+     * @return The firstName of the doctor.
      */
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
     /**
-     * Sets the name of the doctor.
+     * Sets the firstName of the doctor.
      *
-     * @param name The new name of the doctor.
+     * @param firstName The new firstName of the doctor.
      */
-    public void setName(String name) {
-        this.name = Objects.requireNonNull(name, "name must not be null");
+    public void setFirstName(String firstName) {
+        this.firstName = Objects.requireNonNull(firstName, "firstName must not be null");
+    }
+
+    /**
+     * Gets the lastName of the doctor.
+     *
+     * @return The lastName of the doctor.
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * Sets the lastName of the doctor.
+     *
+     * @param lastName The new lastName of the doctor.
+     */
+    public void setLastName(String lastName) {
+        this.lastName = Objects.requireNonNull(lastName, "lastName must not be null");
     }
 
     /* Getters for badgeId and specialty */
     public int getBadgeId() {
-        return badgeId;
+        return hashCode();
     }
 
     /**
@@ -122,13 +141,11 @@ public class DoctorProfile implements Comparable<DoctorProfile> {
      */
     @Override
     public boolean equals(Object otherDoctorProfile) {
-        if (this == otherDoctorProfile) return true;
         if (otherDoctorProfile == null || getClass() != otherDoctorProfile.getClass()) return false;
         DoctorProfile that = (DoctorProfile) otherDoctorProfile;
-        return badgeId == that.badgeId &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(specialty, that.specialty) &&
-                Objects.equals(schedule, that.schedule);
+        return Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(specialty, that.specialty);
     }
 
     /**
@@ -138,7 +155,7 @@ public class DoctorProfile implements Comparable<DoctorProfile> {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, badgeId, specialty, schedule);
+        return Objects.hash(firstName, lastName, specialty);
     }
 
     /**
@@ -150,22 +167,9 @@ public class DoctorProfile implements Comparable<DoctorProfile> {
     public String toString() {
         return "Doctor Information" +
                 "\n---------------------------" +
-                "\nName: " + name +
+                "\nName: " + firstName +
                 "\nBadge ID: " + badgeId +
                 "\nSpecialty: " + specialty +
                 "\nWeekly Schedule: " + schedule.toString();
-    }
-
-    /**
-     * Compares this DoctorProfile with another based on badge ID.
-     *
-     * @param other The other DoctorProfile to compare to.
-     * @return A negative integer, zero, or a positive integer as this badge ID
-     * is less than, equal to, or greater than the specified badge ID.
-     */
-    @Override
-    public int compareTo(DoctorProfile other) {
-        System.out.println("Comparing badge IDs: " + this.badgeId + " and " + other.badgeId);
-        return Integer.compare(this.badgeId, other.badgeId);
     }
 }

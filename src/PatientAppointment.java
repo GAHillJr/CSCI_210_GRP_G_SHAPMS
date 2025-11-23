@@ -1,3 +1,5 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
@@ -9,7 +11,7 @@ import java.util.Objects;
 public class PatientAppointment {
     public PatientProfile PatientProfile;
     public DoctorProfile DoctorProfile;
-    public String dateTime;
+    public LocalDateTime dateTime;
     public String reason;
 
     /**
@@ -20,7 +22,7 @@ public class PatientAppointment {
      * @param dateTime       The date and time of the appointment.
      * @param reason         The reason for the appointment.
      */
-    public PatientAppointment(PatientProfile patientProfile, DoctorProfile doctorProfile, String dateTime, String reason) {
+    public PatientAppointment(PatientProfile patientProfile, DoctorProfile doctorProfile, LocalDateTime dateTime, String reason) {
         this.PatientProfile = patientProfile;
         this.DoctorProfile = doctorProfile;
         this.dateTime = dateTime;
@@ -64,21 +66,12 @@ public class PatientAppointment {
         DoctorProfile = doctorProfile;
     }
 
-    /**
-     * Gets the date and time of the appointment.
-     *
-     * @return The date and time of the appointment.
-     */
-    public String getDateTime() {
+
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    /**
-     * Sets the date and time of the appointment.
-     *
-     * @param dateTime The date and time to set for the appointment.
-     */
-    public void setDateTime(String dateTime) {
+    public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 
@@ -118,9 +111,9 @@ public class PatientAppointment {
     public String toString() {
         return "Appointment Details:" +
                 "\n---------------------------" +
-                "\nPatient Name: " + PatientProfile.getName() +
-                "\nDoctor Name: " + DoctorProfile.getName() +
-                "\nDate/Time: " + dateTime +
+                "\nPatient Name: " + PatientProfile.getLastName() +
+                "\nDoctor Name: " + DoctorProfile.getFirstName() +
+                "\nDate/Time: " + (dateTime == null ? "N/A" : dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))) +
                 "\nReason for Visit: " + reason;
     }
 }
