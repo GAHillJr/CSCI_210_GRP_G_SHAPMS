@@ -2,6 +2,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import static java.time.Duration.*;
+
 /**
  * Represents a scheduled appointment between a patient and a doctor.
  * Instances are immutable: once created the core fields cannot be changed.
@@ -30,6 +32,14 @@ public record PatientAppointment(PatientProfile patientProfile, DoctorProfile do
         this.doctorProfile = Objects.requireNonNull(doctorProfile, "doctorProfile must not be null");
         this.dateTime = Objects.requireNonNull(dateTime, "dateTime must not be null");
         this.reason = requireNonEmpty(reason);
+    }
+
+    //No-args constructor for frameworks that require it (e.g., serialization)
+    public PatientAppointment() {
+        this(new PatientProfile(),
+                new DoctorProfile(),
+                LocalDateTime.now().plusDays(5),
+                "Debug Testing Appointment");
     }
 
     /**

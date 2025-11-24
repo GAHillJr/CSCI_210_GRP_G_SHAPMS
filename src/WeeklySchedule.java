@@ -17,7 +17,7 @@ import java.util.Optional;
  */
 public class WeeklySchedule {
 
-    private final EnumMap<DayOfWeek, String[]> schedule;
+    private final Map<DayOfWeek, String[]> schedule;
     private final int startHour; // inclusive
     private final int endHour;   // exclusive
     private final int slotsPerDay;
@@ -183,6 +183,22 @@ public class WeeklySchedule {
     }
 
     /**
+     * Textual representation showing every day and slot status.
+     */
+    public void displaySchedule() {
+        for (DayOfWeek d : DayOfWeek.values()) {
+            System.out.print(d + ": ");
+            String[] slots = schedule.get(d);
+            for (int i = 0; i < slotsPerDay; i++) {
+                int hour = startHour + i;
+                String status = (slots[i] == null) ? "Available" : "Booked(" + slots[i] + ")";
+                System.out.print("[" + hour + ":00 - " + status + "] ");
+            }
+            System.out.println();
+        }
+    }
+
+    /**
      * Deep equals; compares hours and per-day slot contents.
      */
     @Override
@@ -207,24 +223,5 @@ public class WeeklySchedule {
             h = 31 * h + Arrays.hashCode(schedule.get(d));
         }
         return h;
-    }
-
-    /**
-     * Textual representation showing every day and slot status.
-     */
-    @Override
-    public synchronized String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("WeeklySchedule (").append(startHour).append(":00-").append(endHour).append(":00)\n");
-        for (DayOfWeek day : DayOfWeek.values()) {
-            sb.append("\n--- ").append(day).append(" ---\n");
-            String[] daySlots = schedule.get(day);
-            for (int i = 0; i < slotsPerDay; i++) {
-                int hour = startHour + i;
-                sb.append(String.format("%02d:00-%02d:00: ", hour, hour + 1));
-                sb.append(daySlots[i] == null ? "Available" : daySlots[i]).append('\n');
-            }
-        }
-        return sb.toString();
     }
 }

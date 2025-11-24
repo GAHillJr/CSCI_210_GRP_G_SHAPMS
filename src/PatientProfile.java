@@ -76,6 +76,20 @@ public class PatientProfile {
         }
     }
 
+    //No-args constructor for frameworks that require it (e.g., serialization)
+    /**
+     * No-args constructor initializing with default values.
+     */
+    public PatientProfile() {
+        this.firstName = "John";
+        this.lastName = "Doe";
+        this.dateOfBirth = LocalDate.of(1970, 1, 1);
+        this.contactInfo = "N/A";
+        this.patientId = NEXT_PATIENT_ID.getAndIncrement();
+        this.medicalHistory = new ArrayDeque<>();
+        this.maxActiveAppointments = DEFAULT_MAX_ACTIVE;
+    }
+
     /**
      * Validates that a string is non-null and non-empty after trimming.
      *

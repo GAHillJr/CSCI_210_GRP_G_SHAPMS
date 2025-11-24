@@ -42,6 +42,18 @@ public class DoctorProfile implements Comparable<DoctorProfile> {
         this.badgeId = NEXT_BADGE.getAndIncrement();
     }
 
+    // No-args constructor for frameworks that require it (e.g., serialization)
+    /**
+     * No-args constructor initializing with default values.
+     */
+    public DoctorProfile() {
+        this.firstName = "John";
+        this.lastName = "Doe";
+        this.specialty = "General";
+        this.schedule = new WeeklySchedule();
+        this.badgeId = NEXT_BADGE.getAndIncrement();
+    }
+
     /**
      * Validates that a string is non-null and non-empty after trimming.
      *
