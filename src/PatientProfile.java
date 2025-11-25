@@ -77,6 +77,7 @@ public class PatientProfile {
     }
 
     //No-args constructor for frameworks that require it (e.g., serialization)
+
     /**
      * No-args constructor initializing with default values.
      */
@@ -207,7 +208,8 @@ public class PatientProfile {
     @Override
     public boolean equals(Object otherPatientProfile) {
         if (this == otherPatientProfile) return true;
-        if (otherPatientProfile == null || getClass() != otherPatientProfile.getClass()) return false;
+        if (otherPatientProfile == null || getClass() != otherPatientProfile.getClass())
+            return false;
         PatientProfile that = (PatientProfile) otherPatientProfile;
         return patientId == that.patientId;
     }

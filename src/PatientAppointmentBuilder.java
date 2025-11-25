@@ -18,15 +18,14 @@ public class PatientAppointmentBuilder {
      */
     public PatientAppointment buildFromScratchViaConsole(PatientProfile patient, DoctorProfile doctor) {
         try (Scanner userInput = new Scanner(System.in)) {
+            String reason = prompt(userInput, s -> !s.isBlank(), "Reason required");
             LocalDateTime dateTime = promptDateTime(userInput);
-            String reason = prompt(userInput,
-                    s -> !s.isBlank(), "Reason required");
-
-            return new PatientAppointment(patient, doctor, dateTime, reason);
+            return new PatientAppointment(patient.getFirstName(), doctor.getFirstName(), dateTime, reason);
         }
     }
 
     // Helper methods for prompting user input.
+
     /**
      * Prompts the user for a string input with validation.
      *
@@ -47,17 +46,18 @@ public class PatientAppointmentBuilder {
     /**
      * Prompts the user for a LocalDateTime input with validation.
      *
-     * @param sc Scanner for user input.
+     * @param userInput Scanner for user input.
      * @return Validated user input LocalDateTime.
      */
-    private LocalDateTime promptDateTime(Scanner sc) {
+    private LocalDateTime promptDateTime(Scanner userInput) {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         while (true) {
             System.out.print("Appointment date/time (yyyy-MM-dd HH:mm): ");
-            String line = sc.nextLine().trim();
+            String line = userInput.nextLine().trim();
             try {
                 return LocalDateTime.parse(line, fmt);
-            } catch (DateTimeParseException ignored) {}
+            } catch (DateTimeParseException ignored) {
+            }
             System.out.println("Enter a valid date/time in format yyyy-MM-dd HH:mm");
         }
     }

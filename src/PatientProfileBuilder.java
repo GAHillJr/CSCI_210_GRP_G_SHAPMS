@@ -2,6 +2,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.function.Predicate;
 
 /**
@@ -22,12 +23,14 @@ public class PatientProfileBuilder {
             LocalDate dob = promptDate(userInput, "Date of birth (yyyy-MM-dd or MM/dd/yyyy): ");
             String phoneNumber = prompt(userInput, "Phone Number: ", s -> !s.isBlank(), "Invalid phone " +
                     "Number");
-
-            return new PatientProfile(first, last, dob, phoneNumber, null);
+            Stack<PatientAppointment> medicalHistory = new Stack<>();
+            medicalHistory.addFirst(new PatientAppointment());
+            return new PatientProfile(first, last, dob, phoneNumber, medicalHistory);
         }
     }
 
     // Helper methods for prompting user input.
+
     /**
      * Prompts the user for a string input with validation.
      *
@@ -50,11 +53,11 @@ public class PatientProfileBuilder {
      * Prompts the user for a date input with multiple accepted formats.
      *
      * @param userInput Scanner for user input.
-     * @param message Prompt message.
+     * @param message   Prompt message.
      * @return Parsed LocalDate or null if input is blank.
      */
     private LocalDate promptDate(Scanner userInput, String message) {
-        DateTimeFormatter[] formatters = new DateTimeFormatter[] {
+        DateTimeFormatter[] formatters = new DateTimeFormatter[]{
                 DateTimeFormatter.ISO_LOCAL_DATE,
                 DateTimeFormatter.ofPattern("M/d/yyyy"),
                 DateTimeFormatter.ofPattern("M/d/yy"),
@@ -67,7 +70,8 @@ public class PatientProfileBuilder {
             for (DateTimeFormatter f : formatters) {
                 try {
                     return LocalDate.parse(line, f);
-                } catch (DateTimeParseException ignored) {}
+                } catch (DateTimeParseException ignored) {
+                }
             }
             System.out.println("Invalid date format. Expected yyyy-MM-dd or MM/dd/yyyy or dd/MM/yyyy.");
         }
