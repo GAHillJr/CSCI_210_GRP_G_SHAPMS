@@ -2,8 +2,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import static java.time.Duration.*;
-
 /**
  * Represents a scheduled appointment between a patient and a doctor.
  * Instances are immutable: once created the core fields cannot be changed.

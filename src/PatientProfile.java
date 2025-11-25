@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PatientProfile {
 
     // Static AtomicInteger to generate unique patient IDs
-    private static final AtomicInteger NEXT_PATIENT_ID = new AtomicInteger(1);
+    private static final AtomicInteger NEXT_PATIENT_ID = new AtomicInteger(1000);
     private static final int DEFAULT_MAX_ACTIVE = 3;
 
     // Instance fields
