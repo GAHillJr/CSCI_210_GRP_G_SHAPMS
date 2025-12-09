@@ -24,7 +24,7 @@ public class PatientProfileBuilder {
             String phoneNumber = prompt(userInput, "Phone Number: ", s -> !s.isBlank(), "Invalid phone " +
                     "Number");
             Stack<PatientAppointment> medicalHistory = new Stack<>();
-            medicalHistory.addFirst(new PatientAppointment());
+            medicalHistory.push(new PatientAppointment()); // ADDED FOR HOSPITALDATAMANAGER: use push() instead of addFirst()
             return new PatientProfile(first, last, dob, phoneNumber, medicalHistory);
         }
     }
@@ -77,4 +77,3 @@ public class PatientProfileBuilder {
         }
     }
 }
-
