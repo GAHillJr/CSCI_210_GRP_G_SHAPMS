@@ -77,7 +77,29 @@ provides a structured demo of system functionality and showcases..
 
 
 Data Structures Used
+- The project intentionally incorporates data structures learned in class:
+   - HashMap - fast lookup for patients adn doctors by ID
+   - TreeMap (BST) - sorted searching by patient and doctor names
+   - ArrayList - storage of appoitnments
+   - Set - managinv unique specialities and departments
+   - PriorityQueue (Heap) - identifying most consulted doctors
 
+
+Testing
+Our project contains
+- DoctorProfileTest
+- PatientAppointmentTest
+- PatientProfileTest
+- HospitalDataManagerTest
+
+These tests verify..
+- getter and setter correctness
+- equalitya nd hash code consistency
+- appointment booking and cancellation
+- searching and sorting bejavior
+- edge cases such as empty records and invalid input
+
+--> Testing enured system correctness and long-term stability
 
 
 Individual Contribution
