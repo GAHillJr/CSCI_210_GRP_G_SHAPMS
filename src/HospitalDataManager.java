@@ -151,7 +151,7 @@ public class HospitalDataManager {
         // add to doctor schedule
         for (DoctorProfile doctor : doctorRecords.values()) { 
         	if (appointment.getDoctorName().equals(doctor.getFullName())) { 
-        		doctor.getWeeklySchedule().bookAppointment(
+        		doctor.getSchedule().bookAppointment(
         			    appointment.dateTime().getDayOfWeek(),
         			    appointment.dateTime().getHour(),
         			    appointment.getReason()
@@ -290,7 +290,7 @@ public class HospitalDataManager {
      * Get total number of appointments across all patients
      */
     public int getTotalAppointments() {
-        return patientAppointmentMap.values().stream()
+        return patientAppointmentMap.values()
             return appointments.size();
     }
     

@@ -150,6 +150,10 @@ public class DoctorProfile implements Comparable<DoctorProfile> {
         return schedule.getSlot(day, hour);
     }
 
+    public WeeklySchedule getSchedule() {
+        return schedule;
+    }
+
     @Override
     public boolean equals(Object otherDoctorProfile) {
         if (this == otherDoctorProfile) return true;
