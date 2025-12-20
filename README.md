@@ -107,11 +107,11 @@ Individual Contribution
 Yuji Lee:
 Due to a previously scheduled Robotics Showcase commitment, I will be unable to attend the live project presentation. I attempted to adjust my schedule to attend both, but this was not possible. I have contacted the professor in advance to explain the conflict and to ask how my contribution can best be evaluated.
 To ensure full transparency, I wrote this README to clearly document:
-	•	My individual contributions to the project
-	•	A complete explanation of the system design and logic
-	•	The testing, debugging, and integration work I completed
+- My individual contributions to the project
+- A complete explanation of the system design and logic
+- The testing, debugging, and integration work I completed
 
-- I focused on system correctness, integration, and testing along with backend logic refinement.
+<I focused on system correctness, integration, and testing along with backend logic refinement.>
 1. Core Logic Improvements
    - enhanced HospitalDataManager to properly synchronize patients, doctors, and appointments
    - Ensured appointments are correctly linked to patients, added to medical history, and counted toward doctor consultation statistics
