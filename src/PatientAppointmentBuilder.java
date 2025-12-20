@@ -18,9 +18,11 @@ public class PatientAppointmentBuilder {
      */
     public PatientAppointment buildFromScratchViaConsole(PatientProfile patient, DoctorProfile doctor) {
         try (Scanner userInput = new Scanner(System.in)) {
-            String reason = prompt(userInput, s -> !s.isBlank(), "Reason required");
+        	String reason = prompt(userInput, s -> !s.isBlank(), "Reason required");
             LocalDateTime dateTime = promptDateTime(userInput);
-            return new PatientAppointment(patient.getFirstName(), doctor.getFirstName(), dateTime, reason);
+            String patientName = patient != null ? patient.getFirstName() : "Unknown Patient";
+            String doctorName = doctor != null ? doctor.getFirstName() : "Unknown Doctor";
+            return new PatientAppointment(patientName, doctorName, dateTime, reason);
         }
     }
 
