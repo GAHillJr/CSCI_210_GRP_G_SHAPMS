@@ -104,7 +104,13 @@ These tests verify..
 
 Individual Contribution
 
-(Yuji Lee) - sorry! I won't be able to join the presentation due to my Robotics showcase. I tried to make a time between, but it didn't work out. I sent out an email to the professor so hopefully he replies me back before the presentation about what I can do!
+Yuji Lee:
+Due to a previously scheduled Robotics Showcase commitment, I will be unable to attend the live project presentation. I attempted to adjust my schedule to attend both, but this was not possible. I have contacted the professor in advance to explain the conflict and to ask how my contribution can best be evaluated.
+To ensure full transparency, I wrote this README to clearly document:
+	•	My individual contributions to the project
+	•	A complete explanation of the system design and logic
+	•	The testing, debugging, and integration work I completed
+
 - I focused on system correctness, integration, and testing along with backend logic refinement.
 1. Core Logic Improvements
    - enhanced HospitalDataManager to properly synchronize patients, doctors, and appointments
