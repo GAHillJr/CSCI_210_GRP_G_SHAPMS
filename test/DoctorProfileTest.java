@@ -18,10 +18,14 @@ class DoctorProfileTest {
 
     @Test
     void getFirstName() {
+    	assertEquals("John", doctor.getFirstName());
     }
 
     @Test
     void setFirstName() {
+    	doctor.setFirstName("Jane");
+    	assertEquals("Jane", doctor.getFirstName());
+    	
     }
 
     @Test
@@ -46,6 +50,9 @@ class DoctorProfileTest {
 
     @Test
     void exportSchedule() {
+    	Map<DayOfWeek, String[]> copy = doctor.exportSchedule();
+    	assertNotNull(copy); 
+    	
     }
 
     @Test
@@ -63,7 +70,7 @@ class DoctorProfileTest {
     @Test
     void getSlot() {
     }
-
+daf
     @Test
     void testEquals() {
     }

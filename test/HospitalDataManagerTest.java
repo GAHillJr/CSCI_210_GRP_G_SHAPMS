@@ -6,9 +6,13 @@ import org.junit.jupiter.api.Test;
 
 class HospitalDataManagerTest {
 
-    @Test
-    void addPatient() {
-    }
+	@Test
+	void addPatient() {
+	    HospitalDataManager manager = new HospitalDataManager();
+	    PatientProfile p = new PatientProfile("Alice","Smith",LocalDate.of(2000,1,1),"555-1234", new Stack<>());
+	    manager.addPatient(p);
+	    assertEquals(p, manager.searchPatientById(p.getPatientId()));
+	}
 
     @Test
     void searchPatientById() {
