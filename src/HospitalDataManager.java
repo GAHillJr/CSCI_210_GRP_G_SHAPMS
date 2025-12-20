@@ -290,7 +290,6 @@ public class HospitalDataManager {
      * Get total number of appointments across all patients
      */
     public int getTotalAppointments() {
-        return patientAppointmentMap.values()
             return appointments.size();
     }
     
