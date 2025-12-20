@@ -165,8 +165,9 @@ public class DoctorProfile implements Comparable<DoctorProfile> {
 
     @Override
     public int compareTo(DoctorProfile other) {
-        return Integer.compare(this.badgeId, other.badgeId);
-    }
+    	int cmp = this.lastName.compareToIgnoreCase(other.lastName);
+        if (cmp != 0) return cmp;
+        return this.firstName.compareToIgnoreCase(other.firstName);    }
 
     @Override
     public String toString() {

@@ -33,6 +33,9 @@ public class HospitalDataManager {
     // Map tracking doctor consultation counts for heap operations
     private final Map<Integer, Integer> doctorConsultationCount;
     
+    // Central list of all appointments for easier sorting
+    private final List<PatientAppointment> appointments = new ArrayList<>(); 
+    
     /**
      * Constructor initializes all data structures
      */
@@ -134,14 +137,29 @@ public class HospitalDataManager {
      */
     public void linkAppointmentToPatient(int patientId, PatientAppointment appointment) {
         Objects.requireNonNull(appointment, "appointment must not be null");
+        
+        appointments.add(appointment);
         patientAppointmentMap.computeIfAbsent(patientId, k -> new ArrayList<>()).add(appointment);
         
-        // Increment doctor consultation count - search through all doctors
-        for (DoctorProfile doctor : doctorRecords.values()) {
-            if (appointment.getDoctorName().contains(doctor.getFirstName()) || 
-                appointment.getDoctorName().contains(doctor.getLastName())) {
-                doctorConsultationCount.merge(doctor.getBadgeId(), 1, Integer::sum);
-                break;
+        // add to patient medical history
+        PatientProfile patient = patientRecords.get(patientId); 
+        if (patient != null) { 
+            patient.addToMedicalHistory(appointment); 
+            patient.bookActiveAppointment(appointment); 
+        }
+        
+        // add to doctor schedule
+        for (DoctorProfile doctor : doctorRecords.values()) { 
+        	if (appointment.getDoctorName().equals(doctor.getFullName())) { 
+        		doctor.getWeeklySchedule().bookAppointment(
+        			    appointment.dateTime().getDayOfWeek(),
+        			    appointment.dateTime().getHour(),
+        			    appointment.getReason()
+        		);
+
+                // increment doctor consultation count
+                doctorConsultationCount.merge(doctor.getBadgeId(), 1, Integer::sum); 
+                break; 
             }
         }
     }
@@ -273,8 +291,7 @@ public class HospitalDataManager {
      */
     public int getTotalAppointments() {
         return patientAppointmentMap.values().stream()
-            .mapToInt(List::size)
-            .sum();
+            return appointments.size();
     }
     
     /**
