@@ -117,11 +117,13 @@ public class PatientAppointment implements Comparable<PatientAppointment> {
 
     @Override
     public int compareTo(PatientAppointment other) {
-        int cmp = this.dateTime.compareTo(other.dateTime);
+    	int cmp = this.dateTime.compareTo(other.dateTime);
         if (cmp != 0) return cmp;
         cmp = this.patientName.compareTo(other.patientName);
         if (cmp != 0) return cmp;
-        return this.doctorName.compareTo(other.doctorName);
+        cmp = this.doctorName.compareTo(other.doctorName);
+        if (cmp != 0) return cmp;
+        return this.reason.compareTo(other.reason);
     }
 
     @Override
