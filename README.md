@@ -83,7 +83,7 @@ Data Structures Used
 Individual Contribution
 
 (Yuji Lee) - sorry! I won't be able to join the presentation due to my Robotics showcase. I tried to make a time between, but it didn't work out. I sent out an email to the professor so hopefully he replies me back before the presentation about what I can do!
-I focused on system correctness, integration, and testing along with backend logic refinement.
+- I focused on system correctness, integration, and testing along with backend logic refinement.
 1. Core Logic Improvements
    - enhanced HospitalDataManager to properly synchronize patients, doctors, and appointments
    - Ensured appointments are correctly linked to patients, added to medical history, and counted toward doctor consultation statistics
